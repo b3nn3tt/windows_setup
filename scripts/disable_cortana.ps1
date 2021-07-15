@@ -1,0 +1,23 @@
+#This script is used to disable Cortana
+
+function disable_cortana {
+    Get-AppXPackage -Name Microsoft.549981C3F5F10 -AllUsers | Remove-AppxPackage -AllUsers | Out-Null
+    Get-AppXProvisionedPackage -Online | Where-Object DisplayName -eq Microsoft.549981C3F5F10 | Remove-AppxProvisionedPackage -Online | Out-Null
+
+    $Cortana1 = "HKCU:\SOFTWARE\Microsoft\Personalization\Settings"
+    $Cortana2 = "HKCU:\SOFTWARE\Microsoft\InputPersonalization"
+    $Cortana3 = "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore"
+    If (!(Test-Path $Cortana1)) {
+        New-Item $Cortana1
+    }
+    Set-ItemProperty $Cortana1 AcceptedPrivacyPolicy -Value 0
+    If (!(Test-Path $Cortana2)) {
+        New-Item $Cortana2
+    }
+    Set-ItemProperty $Cortana2 RestrictImplicitTextCollection -Value 1
+    Set-ItemProperty $Cortana2 RestrictImplicitInkCollection -Value 1
+    If (!(Test-Path $Cortana3)) {
+        New-Item $Cortana3
+    }
+    Set-ItemProperty $Cortana3 HarvestContacts -Value 0
+}
